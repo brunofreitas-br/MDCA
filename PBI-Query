@@ -1,0 +1,17 @@
+let
+    url = "YOU-API-ENDPOINT",
+    body = "{""isscan"":true,""filters"":{""activity.eventType"":{""eq"":[""11161:EVENT_O365_GENERIC:SensitivityLabelApplied""]}}}",
+    Source = Json.Document(
+                            Web.Contents(
+                                url,
+                                [Headers = [#"Content-Type"="application/json", #"Authorization"="YOUR-API-TOKEN"], 
+                                Content = Text.ToBinary(body)]
+                                )
+                        ),
+    data = Source[data],
+    #"Converted to Table" = Table.FromList(data, Splitter.SplitByNothing(), null, null, ExtraValues.Error),
+    #"Expanded Column1" = Table.ExpandRecordColumn(#"Converted to Table", "Column1", {"rawDataJson"}, {"Column1.rawDataJson"}),
+    #"Expanded Column1.rawDataJson" = Table.ExpandRecordColumn(#"Expanded Column1", "Column1.rawDataJson", {"CreationTime", "RecordType", "Operation", "Workload", "UserId", "SensitivityLabelEventData"}, {"Column1.rawDataJson.CreationTime", "Column1.rawDataJson.RecordType", "Column1.rawDataJson.Operation", "Column1.rawDataJson.Workload", "Column1.rawDataJson.UserId", "Column1.rawDataJson.SensitivityLabelEventData"}),
+    #"Expanded Column1.rawDataJson.SensitivityLabelEventData" = Table.ExpandRecordColumn(#"Expanded Column1.rawDataJson", "Column1.rawDataJson.SensitivityLabelEventData", {"SensitivityLabelId"}, {"Column1.rawDataJson.SensitivityLabelEventData.SensitivityLabelId"})
+in
+    #"Expanded Column1.rawDataJson.SensitivityLabelEventData"
