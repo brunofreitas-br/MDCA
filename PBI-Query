@@ -4,7 +4,7 @@ let
     Source = Json.Document(
                             Web.Contents(
                                 url,
-                                [Headers = [#"Content-Type"="application/json", #"Authorization"="YOUR-API-TOKEN"], 
+                                [Headers = [#"Content-Type"="application/json", #"Authorization"="Token YOUR-API-TOKEN"], 
                                 Content = Text.ToBinary(body)]
                                 )
                         ),
